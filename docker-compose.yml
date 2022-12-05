@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  postgres:
+      image: postgres:14-alpine
+      restart: always
+      command: postgres
+      environment:
+        - POSTGRES_PASSWORD=postgres
+      ports:
+        - 9132:5432
+      volumes: 
+        - ./database/data.csv:/populate/data.csv
+        - ./database/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
