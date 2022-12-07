@@ -15,6 +15,6 @@ router.get('/decks/:userid/:id', getDeck)
 router.post('/decks', createDeck)
 router.post('/decks/:id', updateDeck)
 router.post('/decks/:userid/:id/cards', addCardToDeck)
-router.post('/decks/:userid/:id/:cardId', removeCardFromDeck)
+router.get('/decks/:userid/:id/:cardId', removeCardFromDeck)
 
 export default router

@@ -168,16 +168,10 @@ export const addCardToDeck = async(req: Request, res: Response) => {
 }
 
 export const removeCardFromDeck = async(req: Request, res: Response) => {
-    console.log("POST api/decks/:userId/:id/:cardId")
-    const cardInfo: AddCardToDeckDto = req.body
+    console.log("GET api/decks/:userId/:id/:cardId")
     const idParam = req.query.id || ''
     const cardIdParam = req.query.cardId || ''
     const userIdParam = req.query.userid || ''
-
-    if (!cardInfo.cardId || !cardInfo.cardName || !cardInfo.coloridentity || !cardInfo.cardPrice) {
-        console.log("Please, inform the cardId, cardName, colorIdentity and cardPrice to register a new deck")
-        return res.status(400).send()
-    }
 
     if(typeof idParam !== "string" || idParam === ''){
         console.log("couldn't get id param value")
