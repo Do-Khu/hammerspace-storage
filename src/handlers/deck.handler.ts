@@ -12,7 +12,6 @@ export const listDecks = async(req: Request, res: Response) =>{
         return res.status(400).send("couldn't get id param value")
     }
     
-    // TODO: adicionar autenticação, OU comunicação por menssageria
     const decks = await _deck.getAll(parseInt(userid))
     if (decks instanceof Error) {
         console.log(decks.message)
