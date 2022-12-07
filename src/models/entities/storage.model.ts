@@ -10,6 +10,9 @@ export class Storage{
     id!: number;
 
     @Column()
+    userid!: number;
+
+    @Column()
     cardid!: number;
 
     @Column()
