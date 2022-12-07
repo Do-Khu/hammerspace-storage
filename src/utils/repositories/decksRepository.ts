@@ -1,3 +1,4 @@
+import { error } from "console";
 import { get } from "http";
 import { stringify } from "querystring";
 import { IsNull, Not, Repository } from "typeorm";
@@ -124,10 +125,11 @@ export class DeckRepository{
     }
 
     // list all decks
-    async getAll() : Promise<Deck[] | Error> {
+    async getAll(userId: number) : Promise<Deck[] | Error> {
         await this.init()
         // TODO: Fazer paginação deste metodo
         const cards = await this.deckRepository.find({
+            where:{ userid: userId }
             // take:100
         })
         .catch((err) => {
@@ -196,5 +198,26 @@ export class DeckRepository{
         })
         .finally(()=>{db.destroy()})
         return card
+    }
+
+    // check if deck belongs to user x
+    async doesDeckBelongsToUser(deckId: number, userId: number): Promise<boolean | Error>{
+        let result = false
+
+        const count = await this.deckRepository.findAndCount({
+            where:{
+                id: deckId,
+                userid: userId
+            }
+        }).catch((err) => {
+            console.log("Db error on checking if user can access deck data: " + err.message)
+            console.log(err.stack)
+            return err
+        })
+
+        if (count > 0)
+            result = true
+
+        return result
     }
 }

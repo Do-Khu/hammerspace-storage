@@ -30,6 +30,7 @@ ALTER TABLE "deck_list" OWNER TO hammerspace;
 
 CREATE TABLE IF NOT EXISTS "storage" (
     id SERIAL PRIMARY KEY,
+    userId INTEGER NOT NULL,
     cardId INTEGER NOT NULL,
     cardName VARCHAR(145) NOT NULL,
     colorIdentity VARCHAR(10) NOT NULL,
