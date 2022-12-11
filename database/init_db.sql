@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS "decks" (
     id SERIAL PRIMARY KEY,
     userId INTEGER NOT NULL,
     deckName VARCHAR(150) NOT NULL,
-    colorIdentity NOT NULL VARCHAR(10),
+    colorIdentity VARCHAR(10) NOT NULL,
     commandercardId INTEGER NOT NULL,
     cardName VARCHAR(145) NOT NULL,
     totalCards INTEGER,
@@ -20,10 +20,10 @@ CREATE TABLE IF NOT EXISTS "deck_list" (
     id SERIAL PRIMARY KEY,
     cardId INTEGER NOT NULL,
     cardName VARCHAR(145) NOT NULL,
-    colorIdentity NOT NULL VARCHAR(10),
+    colorIdentity VARCHAR(10) NOT NULL,
     shouldBuyCard BOOLEAN,
-    storageId REFERENCES "storage"(id)
-    deckId REFERENCES "decks"(id)
+    storageId INTEGER REFERENCES "storage"(id),
+    deckId INTEGER REFERENCES "decks"(id)
 );
 ALTER TABLE "deck_list" OWNER TO hammerspace;
 
@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS "storage" (
     cardId INTEGER NOT NULL,
     cardName VARCHAR(145) NOT NULL,
     colorIdentity VARCHAR(10) NOT NULL,
-    isReserved BOOLEAN
+    isReserved BOOLEAN,
+    deckId INTEGER REFERENCES "decks"(id)
 );
 ALTER TABLE "storage" OWNER TO hammerspace;
 
