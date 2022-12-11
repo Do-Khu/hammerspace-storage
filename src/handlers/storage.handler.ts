@@ -5,7 +5,9 @@ const _storage = new StorageRepository()
 
 export const listStorageCards = async(req: Request, res: Response) =>{
     console.log("GET api/storage/:userid")
-    const userId = req.query.userid || ''
+    console.log(req.params)
+    const userId = req.params.userid || ''
+    
 
     if(typeof userId !== "string" || userId == ''){
         console.log("couldn't get userid param value")
@@ -24,7 +26,7 @@ export const listStorageCards = async(req: Request, res: Response) =>{
 
 export const addCardToStorage = async(req: Request, res: Response) =>{
     console.log("POST api/storage/:userid")
-    const userId = req.query.userid || ''
+    const userId = req.params.userid || ''
     const cardInfo: AddCardToStorageDto = req.body
 
     if(typeof userId !== "string" || userId == ''){
@@ -49,8 +51,8 @@ export const addCardToStorage = async(req: Request, res: Response) =>{
 
 export const findCardsByName = async(req: Request, res: Response) =>{
     console.log("GET api/storage/:userid/:name")
-    const cardName = req.query.name || ''
-    const userId = req.query.userid || ''
+    const cardName = req.params.name || ''
+    const userId = req.params.userid || ''
 
     if(typeof cardName !== "string" || cardName == ''){
         console.log("couldn't get name param value")
@@ -74,8 +76,8 @@ export const findCardsByName = async(req: Request, res: Response) =>{
 
 export const removeCardFromStorage = async(req: Request, res: Response) => {
     console.log("GET api/storage/:userid/:id/remove")
-    const param = req.query.id || ''
-    const userid = req.query.userid || ''
+    const param = req.params.id || ''
+    const userid = req.params.userid || ''
 
     if(typeof param !== "string" || param === ''){
         console.log("couldn't get id param value")
@@ -111,8 +113,8 @@ export const removeCardFromStorage = async(req: Request, res: Response) => {
 
 export const reserveCardFromStorage = async(req: Request, res: Response) => {
     console.log("GET api/storage/:id/reserve")
-    const param = req.query.id || ''
-    const userid = req.query.userid || ''
+    const param = req.params.id || ''
+    const userid = req.params.userid || ''
 
     if(typeof param !== "string" || param === ''){
         console.log("couldn't get id param value")

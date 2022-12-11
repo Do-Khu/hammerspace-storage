@@ -5,7 +5,7 @@ const _deck = new DeckRepository()
 
 export const listDecks = async(req: Request, res: Response) =>{
     console.log("GET api/decks/:userId")
-    const userid = req.query.userid || ''
+    const userid = req.params.userid || ''
 
     if(typeof userid !== "string" || userid === ''){
         console.log("couldn't get id param value")
@@ -43,8 +43,8 @@ export const createDeck = async(req: Request, res: Response) =>{
 
 export const getDeck = async(req: Request, res: Response) => {
     console.log("GET api/decks/:userid/:id")
-    const param = req.query.id || ''
-    const userid = req.query.userid || ''
+    const param = req.params.id || ''
+    const userid = req.params.userid || ''
 
     if(typeof param !== "string" || param === ''){
         console.log("couldn't get id param value")
@@ -94,7 +94,7 @@ export const getDeck = async(req: Request, res: Response) => {
 export const updateDeck = async(req: Request, res: Response) => {
     console.log("POST api/decks/:id")
     const deckInfo: CreateDeckDto = req.body
-    const param = req.query.id || ''
+    const param = req.params.id || ''
 
     if (!deckInfo.commanderCardId || !deckInfo.cardName || !deckInfo.colorIdentity || !deckInfo.deckName || !deckInfo.userId) {
         console.log("Please, inform the commanderCardId, cardName, colorIdentity, deckName and userId to register a new deck")
@@ -129,8 +129,8 @@ export const updateDeck = async(req: Request, res: Response) => {
 export const addCardToDeck = async(req: Request, res: Response) => {
     console.log("POST api/decks/:userid/:id/cards")
     const cardInfo: AddCardToDeckDto = req.body
-    const id = req.query.id || ''
-    const userid = req.query.userid || ''
+    const id = req.params.id || ''
+    const userid = req.params.userid || ''
 
     if (!cardInfo.cardId || !cardInfo.cardName || !cardInfo.coloridentity) {
         console.log("Please, inform the cardId, cardName and colorIdentity to register a new deck")
@@ -169,9 +169,9 @@ export const addCardToDeck = async(req: Request, res: Response) => {
 
 export const removeCardFromDeck = async(req: Request, res: Response) => {
     console.log("GET api/decks/:userId/:id/:cardId")
-    const idParam = req.query.id || ''
-    const cardIdParam = req.query.cardId || ''
-    const userIdParam = req.query.userid || ''
+    const idParam = req.params.id || ''
+    const cardIdParam = req.params.cardId || ''
+    const userIdParam = req.params.userid || ''
 
     if(typeof idParam !== "string" || idParam === ''){
         console.log("couldn't get id param value")
