@@ -16,17 +16,6 @@ CREATE TABLE IF NOT EXISTS "decks" (
 );
 ALTER TABLE "decks" OWNER TO hammerspace;
 
-CREATE TABLE IF NOT EXISTS "deck_list" (
-    id SERIAL PRIMARY KEY,
-    cardId INTEGER NOT NULL,
-    cardName VARCHAR(145) NOT NULL,
-    colorIdentity VARCHAR(10) NOT NULL,
-    shouldBuyCard BOOLEAN,
-    storageId INTEGER REFERENCES "storage"(id),
-    deckId INTEGER REFERENCES "decks"(id)
-);
-ALTER TABLE "deck_list" OWNER TO hammerspace;
-
 CREATE TABLE IF NOT EXISTS "storage" (
     id SERIAL PRIMARY KEY,
     userId INTEGER NOT NULL,
@@ -37,6 +26,17 @@ CREATE TABLE IF NOT EXISTS "storage" (
     deckId INTEGER REFERENCES "decks"(id)
 );
 ALTER TABLE "storage" OWNER TO hammerspace;
+
+CREATE TABLE IF NOT EXISTS "deck_list" (
+    id SERIAL PRIMARY KEY,
+    cardId INTEGER NOT NULL,
+    cardName VARCHAR(145) NOT NULL,
+    colorIdentity VARCHAR(10) NOT NULL,
+    shouldBuyCard BOOLEAN,
+    storageId INTEGER REFERENCES "storage"(id),
+    deckId INTEGER REFERENCES "decks"(id)
+);
+ALTER TABLE "deck_list" OWNER TO hammerspace;
 
 CREATE OR REPLACE FUNCTION deck_cards_resume(_deckId) AS
     RETURNS TABLE (cardId INTEGER, cardName VARCHAR(145), colorIdentity VARCHAR(10), amount INTEGER, storageAmount INTEGER, reservedStorageAmount INTEGER)
