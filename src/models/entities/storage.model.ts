@@ -25,5 +25,5 @@ export class Storage{
     isreserved!: boolean;
 
     @Column()
-    deckId!: number;
+    deckid: number | null = null;
 }

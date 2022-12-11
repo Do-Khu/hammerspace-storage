@@ -21,7 +21,7 @@ export class StorageRepository{
     }
 
     // Add cards to storage
-    async addCard(userId: number, cardId:number, cardName: string, coloridentity: string, ) : Promise<Error | undefined> {
+    async addCard(userId: number, cardId:number, cardName: string, coloridentity: string) : Promise<Error | undefined> {
         await this.init()
         // TODO: Fazer paginação deste metodo
         const card = await this.storageRepository.create({
