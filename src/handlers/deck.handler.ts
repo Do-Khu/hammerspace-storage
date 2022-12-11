@@ -132,8 +132,8 @@ export const addCardToDeck = async(req: Request, res: Response) => {
     const id = req.query.id || ''
     const userid = req.query.userid || ''
 
-    if (!cardInfo.cardId || !cardInfo.cardName || !cardInfo.coloridentity || !cardInfo.cardPrice) {
-        console.log("Please, inform the cardId, cardName, colorIdentity and cardPrice to register a new deck")
+    if (!cardInfo.cardId || !cardInfo.cardName || !cardInfo.coloridentity) {
+        console.log("Please, inform the cardId, cardName and colorIdentity to register a new deck")
         return res.status(400).send()
     }
 
@@ -157,7 +157,7 @@ export const addCardToDeck = async(req: Request, res: Response) => {
         res.status(401).send()
     }
 
-    const err = await _deck.addCard(deckId, cardInfo.cardId, cardInfo.cardName, cardInfo.cardPrice, cardInfo.coloridentity)
+    const err = await _deck.addCard(deckId, cardInfo.cardId, cardInfo.cardName, cardInfo.coloridentity)
     if (err instanceof Error) {
         console.log("error on adding card to deck: " + err.message)
         console.log(err.stack)

@@ -53,14 +53,13 @@ export class DeckRepository{
     }
 
     // Add card to deck
-    async addCard(deckId: number, cardId:number, cardName: string, cardPrice: number, coloridentity: string) : Promise<Error | undefined> {
+    async addCard(deckId: number, cardId:number, cardName: string, coloridentity: string) : Promise<Error | undefined> {
         await this.init()
         // TODO: Fazer paginação deste metodo
         let card = await this.deckListRepository.create({
             deckid: deckId,
             cardid: cardId,
             cardname: cardName,
-            cardprice: cardPrice,
             coloridentity: coloridentity,
             shouldBuyCard: true
         })

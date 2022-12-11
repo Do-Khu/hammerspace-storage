@@ -1,6 +1,5 @@
 type AddCardToDeckDto = {
     cardId:number, 
-    cardName: string, 
-    cardPrice: number, 
+    cardName: string,
     coloridentity: string
 }

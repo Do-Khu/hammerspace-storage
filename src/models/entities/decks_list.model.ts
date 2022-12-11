@@ -16,9 +16,6 @@ export class DeckList{
     cardname!: string;
 
     @Column()
-    cardprice!: number;
-
-    @Column()
     coloridentity!: string;
 
     @Column()
