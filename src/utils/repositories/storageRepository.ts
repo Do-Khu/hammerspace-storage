@@ -120,6 +120,7 @@ export class StorageRepository{
     }
 
     async removeCard(card: Storage) : Promise<Error | undefined>{
+        await this.init()
         await this.storageRepository.remove(card).catch((error) => {
             console.log("Error while removing card from storage: " + error.message)
             console.log(error.stack)
