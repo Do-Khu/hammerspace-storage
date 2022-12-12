@@ -97,7 +97,7 @@ export const removeCardFromStorage = async(req: Request, res: Response) => {
         return res.status(500).send("error on recovering card data when removing it")
     }
 
-    if(card.userid != parseInt(userid)){
+    if(JSON.parse(JSON.stringify(card))[0].userid != parseInt(userid)){
         console.log("you don't have access to this deck")
         return res.status(401).send()
     }
@@ -134,7 +134,7 @@ export const reserveCardFromStorage = async(req: Request, res: Response) => {
         return res.status(500).send("error on recovering card data when updating it")
     }
 
-    if(card.userid != parseInt(userid)){
+    if(JSON.parse(JSON.stringify(card))[0].userid != parseInt(userid)){
         console.log("you don't have access to this deck")
         return res.status(401).send()
     }
