@@ -100,6 +100,26 @@ export class StorageRepository{
         //.finally(()=>{db.destroy()})
         return cards || [];
     }
+    
+    // find (first) card by card all Cards by name
+    async findCardByCardId(cardid: number, userId: number) : Promise<Storage | Error> {
+        await this.init()
+        // TODO: Fazer paginação deste metodo
+        const card = await this.storageRepository.find({
+            where: { 
+                cardid: cardid,
+                userid: userId
+            },
+            take: 1
+        })
+        .catch((err) => {
+            console.log("Db error while getting card by card list: " + err.message)
+            console.log(err.stack)
+            return err
+        })
+        //.finally(()=>{db.destroy()})
+        return card[0];
+    }
 
     // get card data by id
     async findNonUsedCardsById(id: number) : Promise<Storage | Error>{
