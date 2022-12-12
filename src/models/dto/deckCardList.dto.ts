@@ -1,3 +1,4 @@
+// i hate typeorm
 type DeckCard = {
     cardid: number,
     cardName: string,
@@ -6,3 +7,13 @@ type DeckCard = {
     storageAmount: number,
     reservedStorageAmount: number
 }
+
+// type DeckCard = {
+//     id: number,
+//     cardid: number,
+//     cardname: string,
+//     coloridentity: string,
+//     shouldBuyCard: boolean,
+//     deckid: number,
+//     storageId: number
+// }

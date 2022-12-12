@@ -25,5 +25,5 @@ export class DeckList{
     deckid!: number;
 
     @Column()
-    storageId: number | undefined;
+    storageId!: number;
 }

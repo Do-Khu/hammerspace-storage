@@ -28,7 +28,7 @@ export const addCardToStorage = async(req: Request, res: Response) =>{
     console.log("POST api/storage/:userid")
     const userId = req.params.userid || ''
     const cardInfo: AddCardToStorageDto = req.body
-
+    
     if(typeof userId !== "string" || userId == ''){
         console.log("couldn't get userid param value")
         return res.status(400).send("couldn't get userid param value")

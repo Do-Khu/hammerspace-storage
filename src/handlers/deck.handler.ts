@@ -83,9 +83,9 @@ export const getDeck = async(req: Request, res: Response) => {
         coloridentity: deck.coloridentity,
         cardname: deck.cardname,
         commandercardid: deck.commandercardid,
-        ownedCards: deck.ownedCards,
+        ownedCards: deck.ownedcards,
         totalcards: deck.totalcards,
-        cards: deckList
+        cards: JSON.parse(JSON.stringify(deckList)) as DeckCard[] 
     }
 
     return res.status(200).send(deckResume)

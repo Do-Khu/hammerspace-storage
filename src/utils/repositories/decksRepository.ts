@@ -1,7 +1,7 @@
 import { error } from "console";
 import { get } from "http";
 import { stringify } from "querystring";
-import { IsNull, Not, Repository } from "typeorm";
+import { EntityManager, IsNull, Not, QueryRunner, Repository } from "typeorm";
 import { Deck } from "../../models/entities/decks.model";
 import { DeckList } from "../../models/entities/decks_list.model";
 import { Storage } from "../../models/entities/storage.model";
@@ -13,6 +13,7 @@ export class DeckRepository{
     private deckRepository!: Repository<Deck>;
     private deckListRepository!: Repository<DeckList>;
     private storageRepository!: StorageRepository;
+    private queryRunner!: EntityManager;
 
     constructor(){
         this.init()
@@ -25,6 +26,7 @@ export class DeckRepository{
             .then(()=>{
                 this.deckRepository = db.getRepository(Deck)
                 this.deckListRepository = db.getRepository(DeckList)
+                this.queryRunner = db.createEntityManager()
             }).catch((error) => {
                 console.log("Error on db conn: " + error.message)
                 console.log(error.stack)
@@ -40,7 +42,7 @@ export class DeckRepository{
             cardname: cardName,
             coloridentity: colorIdentity,
             totalcards: 0,
-            ownedCards: 0
+            ownedcards: 0
         })
 
         this.deckRepository.save(deck).catch((error) => {
@@ -90,7 +92,7 @@ export class DeckRepository{
         if (deck instanceof Deck)
         {
             deck.totalcards++
-            deck.ownedCards = (storage instanceof Storage && storage.id != 0 ? deck.ownedCards++ : deck.ownedCards)
+            deck.ownedcards = (storage instanceof Storage && storage.id != 0 ? deck.ownedcards++ : deck.ownedcards)
         }
 
         return 
@@ -118,7 +120,7 @@ export class DeckRepository{
         if (deck instanceof Deck)
         {
             deck.totalcards--
-            deck.ownedCards = (card.storageId != undefined && card.storageId != 0 ? deck.ownedCards-- : deck.ownedCards)
+            deck.ownedcards = (card.storageId != undefined && card.storageId != 0 ? deck.ownedcards-- : deck.ownedcards)
         }
         return 
     }
@@ -142,15 +144,20 @@ export class DeckRepository{
 
     // list all cards on storage
     async getDeckList(deckId: number) : Promise<DeckCard[] | Error> {
+    // async getDeckList(deckId: number) : Promise<DeckList[] | Error> {
         await this.init()
-        // TODO: Fazer paginação deste metodo
-        const cards = await this.deckListRepository.query(`select * from deck_cards_resume(${deckId});`)
+        // i hate typeorm he makes using a function a challenge
+        const cards = await this.queryRunner.query(`select * from deck_cards_resume(${deckId});`)
+        // const cards = await this.deckListRepository.find({
+        //     where: {deckid: deckId}
+        // })
         .catch((err) => {
             console.log("Db error while getting Card list: " + err.message)
             console.log(err.stack)
             return err
         })
         .finally(()=>{db.destroy()})
+        console.log(cards)
         return cards || [];
     }
 
@@ -164,7 +171,7 @@ export class DeckRepository{
             coloridentity: colorIdentity,
             commandercardid:commanderCardId,
             totalcards: countDeckList,
-            ownedCards: countOwnedCards
+            ownedcards: countOwnedCards
         }).catch((error) => {
             console.log("Error when updating deck information: " + error.message)
             console.log(error.stack)
