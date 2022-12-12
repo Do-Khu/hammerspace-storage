@@ -28,5 +28,5 @@ export class Deck{
     totalcards!: number;
 
     @Column()
-    ownedCards!: number;
+    ownedcards!: number;
 }

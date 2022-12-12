@@ -10,6 +10,9 @@ export class Storage{
     id!: number;
 
     @Column()
+    userid!: number;
+
+    @Column()
     cardid!: number;
 
     @Column()
@@ -21,6 +24,6 @@ export class Storage{
     @Column()
     isreserved!: boolean;
 
-    @Column()
-    deckId!: number;
+    @Column({ nullable:true})
+    deckid!: number;
 }

@@ -16,9 +16,6 @@ export class DeckList{
     cardname!: string;
 
     @Column()
-    cardprice!: number;
-
-    @Column()
     coloridentity!: string;
 
     @Column()
@@ -28,5 +25,5 @@ export class DeckList{
     deckid!: number;
 
     @Column()
-    storageId: number | undefined;
+    storageId!: number;
 }

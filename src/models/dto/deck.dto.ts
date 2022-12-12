@@ -6,6 +6,6 @@ type DeckDto = {
     commandercardid: number,
     cardname: string,
     totalcards: number,
-    ownedCards: number;
+    ownedCards: number,
     cards: DeckCard[]
 }

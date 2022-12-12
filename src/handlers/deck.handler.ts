@@ -1,15 +1,18 @@
 import { Response, Request } from 'express'
 import { DeckRepository } from '../utils/repositories/decksRepository'
-import { StorageRepository } from '../utils/repositories/storageRepository'
 
-const _storage = new StorageRepository()
 const _deck = new DeckRepository()
 
 export const listDecks = async(req: Request, res: Response) =>{
-    console.log("GET api/decks")
+    console.log("GET api/decks/:userId")
+    const userid = req.params.userid || ''
+
+    if(typeof userid !== "string" || userid === ''){
+        console.log("couldn't get id param value")
+        return res.status(400).send("couldn't get id param value")
+    }
     
-    // TODO: adicionar autenticação, OU comunicação por menssageria
-    const decks = await _deck.getAll()
+    const decks = await _deck.getAll(parseInt(userid))
     if (decks instanceof Error) {
         console.log(decks.message)
         console.log(decks.stack)
@@ -27,7 +30,7 @@ export const createDeck = async(req: Request, res: Response) =>{
         console.log("Please, inform the commanderCardId, cardName, colorIdentity, deckName and userId to register a new deck")
         return res.status(400).send()
     }
-    // TODO: adicionar autenticação, OU comunicação por menssageria
+
     const cards = await _deck.create(deckInfo.userId, deckInfo.deckName, deckInfo.commanderCardId, deckInfo.cardName, deckInfo.colorIdentity)
     if (cards instanceof Error) {
         console.log("error while creating deck: " + cards.message)
@@ -39,12 +42,18 @@ export const createDeck = async(req: Request, res: Response) =>{
 }
 
 export const getDeck = async(req: Request, res: Response) => {
-    console.log("GET api/decks/:id")
-    const param = req.query.id || ''
+    console.log("GET api/decks/:userid/:id")
+    const param = req.params.id || ''
+    const userid = req.params.userid || ''
 
     if(typeof param !== "string" || param === ''){
         console.log("couldn't get id param value")
         return res.status(400).send("couldn't get id param value")
+    }
+
+    if(typeof userid !== "string" || userid === ''){
+        console.log("couldn't get userId param value")
+        return res.status(400).send("couldn't get userId param value")
     }
 
     const deckId : number = parseInt(param)
@@ -53,6 +62,11 @@ export const getDeck = async(req: Request, res: Response) => {
         console.log("error on getting deck data: " + deck.message)
         console.log(deck.stack)
         return res.status(500).send()
+    }
+
+    if(deck.userid != parseInt(userid)){
+        console.log("you don't have access to this deck")
+        return res.status(401).send()
     }
 
     const deckList = await _deck.getDeckList(deck.id)
@@ -69,9 +83,9 @@ export const getDeck = async(req: Request, res: Response) => {
         coloridentity: deck.coloridentity,
         cardname: deck.cardname,
         commandercardid: deck.commandercardid,
-        ownedCards: deck.ownedCards,
+        ownedCards: deck.ownedcards,
         totalcards: deck.totalcards,
-        cards: deckList
+        cards: JSON.parse(JSON.stringify(deckList)) as DeckCard[] 
     }
 
     return res.status(200).send(deckResume)
@@ -80,7 +94,7 @@ export const getDeck = async(req: Request, res: Response) => {
 export const updateDeck = async(req: Request, res: Response) => {
     console.log("POST api/decks/:id")
     const deckInfo: CreateDeckDto = req.body
-    const param = req.query.id || ''
+    const param = req.params.id || ''
 
     if (!deckInfo.commanderCardId || !deckInfo.cardName || !deckInfo.colorIdentity || !deckInfo.deckName || !deckInfo.userId) {
         console.log("Please, inform the commanderCardId, cardName, colorIdentity, deckName and userId to register a new deck")
@@ -93,6 +107,14 @@ export const updateDeck = async(req: Request, res: Response) => {
     }
 
     const deckId : number = parseInt(param)
+    const canAccessDeck = _deck.doesDeckBelongsToUser(deckId,deckInfo.userId)
+    if(canAccessDeck instanceof Error){
+        console.log("Error on checking if user has access to deck")
+        res.status(500).send()
+    } else if (!canAccessDeck){
+        console.log("you dont have access to this deck")
+        res.status(401).send()
+    }
 
     const err = await _deck.update(deckId, deckInfo.deckName, deckInfo.cardName, deckInfo.colorIdentity, deckInfo.commanderCardId)
     if (err instanceof Error) {
@@ -105,23 +127,37 @@ export const updateDeck = async(req: Request, res: Response) => {
 }
 
 export const addCardToDeck = async(req: Request, res: Response) => {
-    console.log("POST api/decks/:id/cards")
+    console.log("POST api/decks/:userid/:id/cards")
     const cardInfo: AddCardToDeckDto = req.body
-    const param = req.query.id || ''
+    const id = req.params.id || ''
+    const userid = req.params.userid || ''
 
-    if (!cardInfo.cardId || !cardInfo.cardName || !cardInfo.coloridentity || !cardInfo.cardPrice) {
-        console.log("Please, inform the cardId, cardName, colorIdentity and cardPrice to register a new deck")
+    if (!cardInfo.cardId || !cardInfo.cardName || !cardInfo.coloridentity) {
+        console.log("Please, inform the cardId, cardName and colorIdentity to register a new deck")
         return res.status(400).send()
     }
 
-    if(typeof param !== "string" || param === ''){
+    if(typeof id !== "string" || id === ''){
         console.log("couldn't get id param value")
         return res.status(400).send("couldn't get id param value")
     }
 
-    const deckId : number = parseInt(param)
+    if(typeof userid !== "string" || userid === ''){
+        console.log("couldn't get id param value")
+        return res.status(400).send("couldn't get id param value")
+    }
 
-    const err = await _deck.addCard(deckId, cardInfo.cardId, cardInfo.cardName, cardInfo.cardPrice, cardInfo.coloridentity)
+    const deckId : number = parseInt(id)
+    const canAccessDeck = _deck.doesDeckBelongsToUser(deckId, parseInt(userid))
+    if(canAccessDeck instanceof Error){
+        console.log("Error on checking if user has access to deck")
+        res.status(500).send()
+    } else if (!canAccessDeck){
+        console.log("you dont have access to this deck")
+        res.status(401).send()
+    }
+
+    const err = await _deck.addCard(deckId, cardInfo.cardId, cardInfo.cardName, cardInfo.coloridentity)
     if (err instanceof Error) {
         console.log("error on adding card to deck: " + err.message)
         console.log(err.stack)
@@ -132,15 +168,10 @@ export const addCardToDeck = async(req: Request, res: Response) => {
 }
 
 export const removeCardFromDeck = async(req: Request, res: Response) => {
-    console.log("POST api/decks/:id/:cardId")
-    const cardInfo: AddCardToDeckDto = req.body
-    const idParam = req.query.id || ''
-    const cardIdParam = req.query.cardId || ''
-
-    if (!cardInfo.cardId || !cardInfo.cardName || !cardInfo.coloridentity || !cardInfo.cardPrice) {
-        console.log("Please, inform the cardId, cardName, colorIdentity and cardPrice to register a new deck")
-        return res.status(400).send()
-    }
+    console.log("GET api/decks/:userId/:id/:cardId")
+    const idParam = req.params.id || ''
+    const cardIdParam = req.params.cardId || ''
+    const userIdParam = req.params.userid || ''
 
     if(typeof idParam !== "string" || idParam === ''){
         console.log("couldn't get id param value")
@@ -152,8 +183,24 @@ export const removeCardFromDeck = async(req: Request, res: Response) => {
         return res.status(400).send("couldn't get cardid param value")
     }
 
+    if(typeof userIdParam !== "string" || userIdParam === ''){
+        console.log("couldn't get userid param value")
+        return res.status(400).send("couldn't get userid param value")
+    }
+
     const deckId : number = parseInt(idParam)
     const cardId : number = parseInt(cardIdParam)
+    const userId : number = parseInt(userIdParam)
+
+    const canAccessDeck = _deck.doesDeckBelongsToUser(deckId,userId)
+    if(canAccessDeck instanceof Error){
+        console.log("Error on checking if user has access to deck")
+        res.status(500).send()
+    } else if (!canAccessDeck){
+        console.log("you dont have access to this deck")
+        res.status(401).send()
+    }
+
     const card = await _deck.getDeckCard(cardId)
     if (card instanceof Error) {
         console.log("error on recovering deck data: " + card.message)

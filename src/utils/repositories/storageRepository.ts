@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 import { Storage } from "../../models/entities/storage.model";
 import { db } from "../database.utils"
 
@@ -21,10 +21,11 @@ export class StorageRepository{
     }
 
     // Add cards to storage
-    async addCard(cardId:number, cardName: string, coloridentity: string, ) : Promise<Error | undefined> {
+    async addCard(userId: number, cardId:number, cardName: string, coloridentity: string) : Promise<Error | undefined> {
         await this.init()
         // TODO: Fazer paginação deste metodo
         const card = await this.storageRepository.create({
+            userid: userId,
             cardname: cardName,
             coloridentity: coloridentity,
             cardid: cardId,
@@ -40,10 +41,11 @@ export class StorageRepository{
     }
 
     // list all Cards on storage
-    async getAll() : Promise<Storage[] | Error> {
+    async getAll(userId: number) : Promise<Storage[] | Error> {
         await this.init()
         // TODO: Fazer paginação deste metodo
         const cards = await this.storageRepository.find({
+            where:{ userid: userId }
             // take:100
         })
         .catch((err) => {
@@ -80,11 +82,14 @@ export class StorageRepository{
     }
 
     // list all Cards by name
-    async findCardByName(cardName: string) : Promise<Storage[] | Error> {
+    async findCardByName(cardName: string, userId: number) : Promise<Storage[] | Error> {
         await this.init()
         // TODO: Fazer paginação deste metodo
         const cards = await this.storageRepository.find({
-            where: { cardname: cardName },
+            where: { 
+                cardname: Like(cardName),
+                userid: userId
+            },
             take: 10
         })
         .catch((err) => {
@@ -122,5 +127,26 @@ export class StorageRepository{
         })
 
         return 
+    }
+
+    // check if deck belongs to user x
+    async doesCardBelongsToUser(cardId: number, userId: number): Promise<boolean | Error>{
+        let result = false
+
+        const count = await this.storageRepository.findAndCount({
+            where:{
+                id: cardId,
+                userid: userId
+            }
+        }).catch((err) => {
+            console.log("Db error on checking if user can access storage data: " + err.message)
+            console.log(err.stack)
+            return err
+        })
+
+        if (count > 0)
+            result = true
+
+        return result
     }
 }
