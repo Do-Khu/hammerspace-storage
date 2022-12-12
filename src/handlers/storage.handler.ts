@@ -90,7 +90,7 @@ export const removeCardFromStorage = async(req: Request, res: Response) => {
     }
 
     const storageId : number = parseInt(param)
-    const card = await _storage.findCardByCardId(storageId)
+    const card = await _storage.findCardByCardId(storageId, parseInt(userid))
     if (card instanceof Error) {
         console.log("error on getting card data: " + card.message)
         console.log(card.stack)
