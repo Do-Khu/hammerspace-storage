@@ -98,7 +98,7 @@ export const removeCardFromStorage = async(req: Request, res: Response) => {
     }
     console.log(card)
 
-    if(JSON.parse(JSON.stringify(card))[0].userid != parseInt(userid)){
+    if(card.userid != parseInt(userid)){
         console.log("you don't have access to this deck")
         return res.status(401).send()
     }
