@@ -97,7 +97,7 @@ export class StorageRepository{
             console.log(err.stack)
             return err
         })
-        .finally(()=>{db.destroy()})
+        //.finally(()=>{db.destroy()})
         return cards || [];
     }
 
