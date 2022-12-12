@@ -57,3 +57,23 @@ Remover carta do inventário.
 ### GET api/storage/:userid/:id/reserve
 
 Reservar uso de carta no inventário.
+
+### POST api/decks
+
+Criar deck.
+
+### GET api/decks/:userid
+
+Lista os decks de um usuário.
+
+### GET api/decks/:userid/:id
+
+Retornas as informações e cartas de um deck.
+
+### GET api/decks/:userid/:id/cards
+
+Adiciona carta ao deck.
+
+### GET api/decks/:userid/:id/:cardId
+
+Remover carta do deck.
