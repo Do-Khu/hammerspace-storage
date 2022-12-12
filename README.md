@@ -18,3 +18,42 @@ Atualmente a aplicação possui 3 microsserviços:
 - **[api-gateway](https://github.com/Do-Khu/hammerspace-api)**: a porta de entrada da aplicação, todas as iterações externas devem ser feitas à esse microserviço que irá chamar os demais necessários para realizar os comandos requisitados. Atualmente está realizando o controle de: *Usuários*.
 - **[cards](https://github.com/Do-Khu/hammerspace-card)**: Microsserviço de consulta de cartas de magic.
 - **[storage](https://github.com/Do-Khu/hammerspace-storage)**: Microsserviço de gerenciamento de decks e cartas que o jogador possui.
+
+## Consumindo o Serviço
+
+### POST api/storage/:userid
+
+Adicionar carta ao inventário do usuário.
+Exemplo de JSON Body:
+
+``` JSON
+{
+    "cardId": 0,
+    "cardname": "agenteP",
+    "coloridentity": "G"
+}
+```
+
+### GET api/storage/:userid
+
+Lista das cartas no estoque de um usuário.
+
+### GET api/storage/:userid/:name
+
+Pesquisa de um card no estoque do usuário pelo nome da carta.
+
+Exemplo do retorno Token JWT HS256:
+
+``` JSON
+{
+    "token" : "tokenJWT"
+}
+```
+
+### GET api/storage/:userid/:id/remove
+
+Remover carta do inventário.
+
+### GET api/storage/:userid/:id/reserve
+
+Reservar uso de carta no inventário.
